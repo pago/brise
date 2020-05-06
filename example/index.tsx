@@ -1,7 +1,8 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { styled, styles, property } from '../.';
+import { css } from 'emotion';
+import { tw, styles, property } from '../.';
 
 interface TextProps {
   important?: boolean;
@@ -14,7 +15,7 @@ const withImportant = styles<TextProps>`
 `;
 
 // type is figured out because of the `withImportant`
-const Headline: React.FC<TextProps> = styled.h1`
+const Headline: React.FC<TextProps> = tw.h1`
   text-blue-600
   ${property(
     'size',
@@ -28,16 +29,35 @@ const Headline: React.FC<TextProps> = styled.h1`
   ${withImportant}
 `;
 
-const Text: React.FC<TextProps> = styled.p<TextProps>`
+const UnderlinedHeadline = tw(Headline)`
+  underline
+`;
+
+const Text: React.FC<TextProps> = tw.p<TextProps>`
   text-xl
   ${props => (props.important ? 'font-bold' : '')}
+`;
+
+const Button = tw.button<TextProps>`
+  py-2 px-4
+  border border-transparent
+  rounded
+  bg-blue-500
+  text-white
+  hover:bg-blue-700
+  ${css`
+    &:hover {
+      text-decoration: underline;
+    }
+  `}
 `;
 
 const App = () => {
   return (
     <>
-      <Headline size="small">Hello World</Headline>
+      <UnderlinedHeadline size="small">Hello World</UnderlinedHeadline>
       <Text size="medium">This is my new website</Text>
+      <Button>Click me</Button>
     </>
   );
 };

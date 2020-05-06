@@ -1,5 +1,4 @@
 import React from 'react';
-import validAttr from '@emotion/is-prop-valid';
 import {
   buildClassList,
   mergeClassNames,
@@ -34,7 +33,7 @@ type Styled = (<T extends AcceptsClassNameProperty>(
   };
 
 //@ts-ignore
-export const styled: Styled = <
+export const tw: Styled = <
   T extends AcceptsClassNameProperty = AcceptsClassNameProperty
 >(
   elem: React.ComponentType<T> | string
@@ -46,9 +45,13 @@ export const styled: Styled = <
     const StyledComponent: React.FC<StyledComponentProps<T>> = props => {
       const element = props.as || elem;
       const className = buildClassList(parts, expressions, props);
-      const finalProps =
-        typeof element === 'string' ? filterProps(props) : props;
-      finalProps.className = mergeClassNames(className, finalProps.className);
+      const finalProps = Object.assign(
+        {},
+        typeof element === 'string' ? filterProps(props) : props,
+        {
+          className: mergeClassNames(className, props.className),
+        }
+      );
       return React.createElement(element, finalProps, props.children);
     };
     return StyledComponent;
@@ -59,7 +62,7 @@ export const styled: Styled = <
 
 domElements.forEach(elem => {
   //@ts-ignore
-  styled[elem] = styled(elem);
+  tw[elem] = tw(elem);
 });
 
 export const styles = <T extends any>(
